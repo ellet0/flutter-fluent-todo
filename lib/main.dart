@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+
 import 'pages/home.dart';
 
 void main() {
@@ -14,11 +15,10 @@ class MyApp extends StatelessWidget {
     return FluentApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        accentColor: Colors.blue,
-      ),
+      theme: FluentThemeData.light(),
+      darkTheme: FluentThemeData.dark(),
+      themeMode: ThemeMode.system,
       home: const HomePage(),
     );
   }
 }
-

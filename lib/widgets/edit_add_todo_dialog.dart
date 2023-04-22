@@ -3,7 +3,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import '../models/todo.dart';
 
 class EditAddTodoContent extends StatefulWidget {
-  const EditAddTodoContent(this.onSendClick, this.todoEdit, {Key? key}) : super(key: key);
+  const EditAddTodoContent(this.onSendClick, this.todoEdit, {Key? key})
+      : super(key: key);
 
   final Function onSendClick;
   final Todo? todoEdit;
@@ -42,6 +43,7 @@ class _EditAddTodoContentState extends State<EditAddTodoContent> {
             placeholder: 'Title',
             minLines: 1,
             maxLines: 1,
+            textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: 20),
           TextBox(
@@ -49,10 +51,12 @@ class _EditAddTodoContentState extends State<EditAddTodoContent> {
             minLines: 3,
             maxLines: 5,
             placeholder: 'Description',
+            textInputAction: TextInputAction.next,
+            onSubmitted: (value) => _sendTodo(),
           ),
           const SizedBox(height: 20),
           Checkbox(
-            content: Text('Is finished'),
+            content: const Text('Is finished'),
             checked: _isFinished,
             onChanged: (value) {
               if (value == null) return;
@@ -64,21 +68,22 @@ class _EditAddTodoContentState extends State<EditAddTodoContent> {
         ],
       ),
       actions: [
-        TextButton(onPressed: _closeDialog, child: const Text('Cancel')),
-        TextButton(onPressed: _sendTodo, child: Text(widget.todoEdit != null ? 'Edit' : 'Create')),
+        HyperlinkButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel')),
+        HyperlinkButton(
+            onPressed: _sendTodo,
+            child: Text(widget.todoEdit != null ? 'Edit' : 'Create')),
       ],
     );
-  }
-
-  void _closeDialog() {
-    Navigator.pop(context);
   }
 
   void _sendTodo() {
     String title = titleController.text;
     String description = descriptionController.text;
-    final todo = Todo(title: title, description: description, isFinished: _isFinished);
+    final todo =
+        Todo(title: title, description: description, isFinished: _isFinished);
     widget.onSendClick(todo);
-    _closeDialog();
+    Navigator.pop(context);
   }
 }

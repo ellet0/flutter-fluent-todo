@@ -1,9 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:lottie/lottie.dart';
-import '/generated/assets.dart';
 
-import '/widgets/edit_add_todo_dialog.dart';
 import '/models/todo.dart';
+import '/widgets/edit_add_todo_dialog.dart';
+import '../generated/assets.gen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,21 +13,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedIndex = 0;
+  var selectedIndex = 0;
   final List<Todo> todos = [];
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    print('Building');
     return NavigationView(
       appBar: _getAppBar(),
       pane: _getNavigationPane(),
-      content: _getNavigationBody(),
+      // content: _getNavigationBody(),
     );
   }
 
@@ -43,14 +37,12 @@ class _HomePageState extends State<HomePage> {
           Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton(
-                child: const Text("Add Todo"),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (ctx) {
-                        return EditAddTodoContent(_addTodoItem, null);
-                      });
-                }),
+              child: const Text("Add Todo"),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (ctx) => EditAddTodoContent(_addTodoItem, null),
+              ),
+            ),
           ),
           const SizedBox(width: 20)
         ],
@@ -74,53 +66,37 @@ class _HomePageState extends State<HomePage> {
           PaneItem(
             icon: const Icon(FluentIcons.to_do_logo_outline),
             title: const Text('Todo'),
+            body: todos.isNotEmpty
+                ? _getTodoList()
+                : Lottie.asset(Assets.lottie.noData.path),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.settings),
             title: const Text('Settings'),
+            body: const Center(
+              child: Text('Settings'),
+            ),
           ),
         ]);
   }
 
-  Widget _getNavigationBody() {
-    return NavigationBody(
-      index: selectedIndex,
-      children: [
-        todos.isNotEmpty
-            ? _getTodoList()
-            : Lottie.asset(Assets.lottieNoData),
-        Container(
-          child: const Center(
-            child: Text('Settings'),
-          ),
-        ),
-      ],
-    );
-  }
+  void _addTodoItem(Todo todo) => setState(() {
+        todos.add(todo);
+      });
 
-  void _addTodoItem(Todo todo) {
-    setState(() {
-      todos.add(todo);
-    });
-  }
+  void _deleteTodoItem(int index) => setState(() {
+        todos.removeAt(index);
+      });
 
-  void _deleteTodoItem(int index) {
-    setState(() {
-      todos.removeAt(index);
-    });
-  }
-
-  void editTodoItem(int index) {
-    showDialog(
-        context: context,
-        builder: (ctx) {
-          return EditAddTodoContent((Todo todo) {
-            setState(() {
-              todos[index] = todo;
-            });
-          }, todos[index]);
-        });
-  }
+  void editTodoItem(int index) => showDialog(
+      context: context,
+      builder: (ctx) {
+        return EditAddTodoContent((Todo todo) {
+          setState(() {
+            todos[index] = todo;
+          });
+        }, todos[index]);
+      });
 
   Widget _getTodoList() {
     return ListView.builder(
@@ -129,6 +105,7 @@ class _HomePageState extends State<HomePage> {
           return GestureDetector(
             onTap: () => editTodoItem(index),
             child: ListTile(
+              onPressed: () {},
               title: Text(todos[index].title),
               subtitle: Text(todos[index].description),
               trailing: IconButton(
